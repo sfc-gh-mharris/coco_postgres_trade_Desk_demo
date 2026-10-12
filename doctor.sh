@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Health check: re-runs every installer verification without changing anything.
 set -uo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 . scripts/lib/common.sh
 . scripts/lib/checks.sh
 load_config; recall; write_vars

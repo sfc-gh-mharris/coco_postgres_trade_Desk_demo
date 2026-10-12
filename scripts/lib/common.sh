@@ -49,8 +49,11 @@ lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
 # ---------------------------------------------------------------- config and derived names
 load_config() {
   [ -f "$CONFIG" ] || die "No config at $CONFIG" "cp config/demo.example.env config/demo.env and edit it"
+  # The config path is chosen at runtime (DESK_CONFIG), so shellcheck cannot follow it.
+  set -a
   # shellcheck disable=SC1090
-  set -a; . "$CONFIG"; set +a
+  . "$CONFIG"
+  set +a
   case "$PREFIX" in ''|*[!A-Z0-9_]*|[0-9_]*) die "PREFIX must be upper-case letters, digits and _ (got '$PREFIX')";; esac
   case "$UI" in streamlit|node|both) ;; *) die "UI must be streamlit, node or both (got '$UI')";; esac
   case "$PG_MODE" in create|existing) ;; *) die "PG_MODE must be create or existing";; esac
@@ -108,7 +111,13 @@ EOF
 
 # Persist discovered values (PG_HOST, INSTALL_USER, dates) across resumed runs.
 remember() { printf '%s=%s\n' "$1" "$2" >> "$STATE/discovered.env"; eval "$1=\"\$2\""; }
-recall() { [ -f "$STATE/discovered.env" ] && { set -a; . "$STATE/discovered.env"; set +a; }; return 0; }
+recall() {
+  [ -f "$STATE/discovered.env" ] || return 0
+  set -a
+  # shellcheck disable=SC1091
+  . "$STATE/discovered.env"
+  set +a
+}
 
 render() {  # render <src relative to ROOT> -> prints path of rendered file
   local src="$1" dst="$BUILD/sql/$(basename "$1")"

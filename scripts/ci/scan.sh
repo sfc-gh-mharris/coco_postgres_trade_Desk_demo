@@ -2,7 +2,7 @@
 # Repository hygiene: fail if account-specific values, local paths, or key material are committed.
 # Runs in CI and before every push. Add new patterns here when a value must never ship.
 set -uo pipefail
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../.." || exit 1
 
 patterns='mharris|MHARRIS|demo-awse|DEMO_AWSE|sfsenorthamerica|SFSENORTHAMERICA|/Users/|3v3tvjod|agent_test|CORTEX_POSTGRES_TESTING|bra4qhkn|fra4qhkn|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY'
 hits=$(git ls-files -co --exclude-standard 2>/dev/null | grep -vE '^(scripts/ci/scan\.sh|command/package-lock\.json)$' \

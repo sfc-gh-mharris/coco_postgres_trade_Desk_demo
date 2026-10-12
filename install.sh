@@ -9,7 +9,7 @@
 #
 # Each stage applies, then verifies; on failure it stops with the reason and how to fix it.
 set -uo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 . scripts/lib/common.sh
 . scripts/lib/checks.sh
 
@@ -183,7 +183,7 @@ stage_images() {
   local img
   for img in desk-agents desk-command; do
     if [ "$img" = desk-command ] && [ "$UI" = streamlit ]; then info "skip desk-command (UI=streamlit)"; continue; fi
-    local dir=agents; [ "$img" = desk-command ] && dir=command
+    local dir="agents"; [ "$img" = desk-command ] && dir="command"
     info "building $img (linux/amd64; first build takes a few minutes)"
     docker build --platform linux/amd64 -t "$reg$REPO_PATH/$img:$VERSION" "$dir" > "$LOGS/build_$img.log" 2>&1 \
       || die "docker build $img failed" "See $LOGS/build_$img.log"
@@ -205,13 +205,13 @@ stage_pgschema() {
   # Agents must not be running while tests seed breaks.
   local s; for s in DESK_WORKER DESK_WORKER_CANARY DESK_QC; do sf_q "$AGENT_ROLE" "ALTER SERVICE IF EXISTS $DB.APP.$s SUSPEND"; done
   sf_q "$SERVICE_ROLE" "ALTER SERVICE IF EXISTS $DB.APP.DESK_EXECUTOR SUSPEND"
-  local schema cmd t=(); schema=$(render sql/postgres/desk_schema.sql); cmd=$(render sql/postgres/desk_command.sql)
+  local schema cmd tests=(); schema=$(render sql/postgres/desk_schema.sql); cmd=$(render sql/postgres/desk_command.sql)
   local f
   for f in 01_sim@desk_sim 02_app@desk_app 03_approver_pre_qc@desk_approver_svc 04_qc@desk_qc \
            05_approver_approve@desk_approver_svc 06_exec@desk_exec 07_admin@pg_admin 08_close_day@desk_approver_svc; do
-    t+=("$ROOT/sql/postgres/tests/${f%@*}.sql@${f#*@}")
+    tests+=("$ROOT/sql/postgres/tests/${f%@*}.sql@${f#*@}")
   done
-  pg_job tests "$schema@pg_admin" "$cmd@pg_admin" "${t[@]}" \
+  pg_job tests "$schema@pg_admin" "$cmd@pg_admin" "${tests[@]}" \
     || die "Schema or test job failed" "See $LOGS/pg_tests.log" "If it is a connection error, check the network policy on $PG_INSTANCE"
   local res; res=$(python3 - "$LOGS/pg_tests.log" <<'PY'
 import json, sys

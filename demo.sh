@@ -8,7 +8,7 @@
 #   ./demo.sh executor pause|resume   hold the executor (for the approve-then-kill demo)
 #   ./demo.sh pause | resume    stop/start billing: services, pool, Postgres instance
 set -uo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 . scripts/lib/common.sh
 . scripts/lib/checks.sh
 load_config; recall; write_vars

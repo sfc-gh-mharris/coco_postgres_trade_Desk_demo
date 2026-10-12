@@ -4,7 +4,7 @@
 #   ./uninstall.sh --yes      no prompt
 #   ./uninstall.sh --keep-postgres   keep the Postgres instance (PG_MODE=existing is always kept)
 set -uo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 . scripts/lib/common.sh
 KEEP_PG=0
 for a in "$@"; do case "$a" in --yes|-y) ASSUME_YES=1;; --keep-postgres) KEEP_PG=1;; esac; done
