@@ -1,0 +1,18 @@
+{
+  "name": "desk-command",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Break desk command center: live approval workflow + mirror dashboard on SPCS",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check lib/pg.js && node --check lib/sf.js && node --check lib/kpis.js && node --check public/app.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "snowflake-sdk": "^2.0.2"
+  }
+}

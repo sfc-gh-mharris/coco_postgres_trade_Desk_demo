@@ -1,0 +1,32 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hygiene scan (no account values, keys, or unknown template vars)
+        run: bash scripts/ci/scan.sh
+      - name: Shell lint
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck -S warning -e SC1091,SC2034,SC2155 install.sh doctor.sh demo.sh uninstall.sh scripts/lib/*.sh scripts/ci/*.sh
+      - name: Python compiles
+        run: python3 -m py_compile agents/app/*.py scripts/lib/render.py
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Node syntax
+        working-directory: command
+        run: |
+          node --check server.js && node --check lib/pg.js && node --check lib/sf.js
+          node --check lib/kpis.js && node --check public/app.js
+      - name: Templates render with the example config
+        run: |
+          mkdir -p build/sql
+          cp config/demo.example.env config/demo.env
+          bash -c '. scripts/lib/common.sh; load_config; PG_HOST=example.host INSTALL_USER=CI_USER \
+            EGRESS_CIDRS="'"'"'10.0.0.0/24'"'"'" EGRESS_EXPIRES=2099-01-01 write_vars
+            for f in sql/snowflake/*.sql sql/postgres/*.sql sql/analytics/*.sql; do python3 scripts/lib/render.py build/vars.env "$f" "build/sql/$(basename "$f")" || exit 1; done
+            ! grep -lE "\{\{[A-Z][A-Z0-9_]*\}\}" build/sql/*.sql'

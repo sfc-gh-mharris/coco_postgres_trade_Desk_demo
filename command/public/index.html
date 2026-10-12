@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Break Desk Command</title>
+<link rel="stylesheet" href="/styles.css?v=2">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">&#10052;</span> Break Desk <b>Command</b>
+    <span class="sub">T+1 trade breaks &middot; governed agents on Snowflake</span></div>
+  <div class="pills">
+    <span class="pill" id="pill-listen"><i class="dot"></i> LISTEN/NOTIFY</span>
+    <span class="pill" id="pill-mirror">Mirror &mdash;</span>
+    <span class="pill" id="pill-kill">Agents &mdash;</span>
+    <span class="pill" id="pill-day">Day &mdash;</span>
+    <span class="pill user" id="pill-user">&hellip;</span>
+  </div>
+</header>
+
+<section class="arch" id="arch">
+  <div class="node" data-n="pg"><b>Snowflake Postgres</b><span>queue &middot; leases &middot; ledger</span></div>
+  <div class="edge">NOTIFY</div>
+  <div class="node" data-n="agent"><b>Investigator agents</b><span>SPCS &middot; Cortex</span></div>
+  <div class="edge">tier</div>
+  <div class="node" data-n="qc"><b>QC agent</b><span>independent model</span></div>
+  <div class="edge">hash</div>
+  <div class="node" data-n="human"><b>Human approver</b><span>you, by name</span></div>
+  <div class="edge">fence</div>
+  <div class="node" data-n="exec"><b>Executor</b><span>kill switch &middot; idempotent</span></div>
+  <div class="edge">mirror</div>
+  <div class="node" data-n="sf"><b>Snowflake analytics</b><span>$LIVE &middot; $CHANGES</span></div>
+</section>
+
+<main class="grid">
+  <section class="col live">
+    <div class="card controls">
+      <h2>Demo controls</h2>
+      <div class="row">
+        <span class="lbl">Add breaks</span>
+        <button class="btn" data-add="5">+5</button>
+        <button class="btn" data-add="10">+10</button>
+        <button class="btn" data-add="25">+25</button>
+        <label class="chk"><input type="checkbox" id="trickle" checked> trickle 1/s</label>
+      </div>
+      <div class="row">
+        <button class="btn good" id="btn-bulk">Approve all eligible</button>
+        <button class="btn warn" id="btn-close">Close day / roll backlog</button>
+      </div>
+      <div class="dayinfo" id="dayinfo"></div>
+    </div>
+
+    <div class="card">
+      <h2>Agents <small id="agents-sub"></small></h2>
+      <div class="slots" id="slots"></div>
+      <div class="controls-list" id="controls"></div>
+    </div>
+
+    <div class="card">
+      <h2>Approval queue <small id="queue-sub"></small></h2>
+      <div class="cards" id="approvals"></div>
+    </div>
+
+    <div class="card">
+      <h2>Live ledger <small>desk_events, append-only</small></h2>
+      <ul class="ticker" id="ticker"></ul>
+    </div>
+  </section>
+
+  <section class="col dash">
+    <div class="dash-head">
+      <h2>Desk dashboard <small id="kpi-sub">from the Snowflake mirror</small></h2>
+      <div class="seg" id="scope">
+        <button data-scope="today" class="on">Today</button><button data-scope="all">All time</button>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="charts">
+      <div class="card wide"><h3>Flow per minute <small>received &middot; proposed &middot; executed</small></h3><div id="ch-flow" class="chart"></div></div>
+      <div class="card"><h3>Breaks by custodian</h3><div id="ch-cust" class="chart"></div></div>
+      <div class="card"><h3>Proposed action mix</h3><div id="ch-mix" class="chart"></div></div>
+      <div class="card"><h3>Open exposure by currency</h3><div id="ch-ccy" class="chart"></div></div>
+      <div class="card"><h3>Open break aging</h3><div id="ch-age" class="chart"></div></div>
+    </div>
+
+    <h2 class="vp-title">Why this architecture <small>measured live, not claimed</small></h2>
+    <div class="vp" id="vp"></div>
+
+    <div class="card">
+      <h3>Agent performance <small>agent_runs via mirror</small></h3>
+      <table class="tbl" id="agent-perf"></table>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js?v=2"></script>
+</body>
+</html>

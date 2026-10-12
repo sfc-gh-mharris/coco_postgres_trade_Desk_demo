@@ -1,0 +1,8 @@
+build/
+config/demo.env
+node_modules/
+__pycache__/
+*.pyc
+*.pem
+.DS_Store
+.snowflake/

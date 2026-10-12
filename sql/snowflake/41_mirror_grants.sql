@@ -1,0 +1,9 @@
+-- Stage: mirror read access for the Node command center. Run as ACCOUNTADMIN after the mirror exists.
+-- The mirror includes desk.break_truth (ground truth), so only the command-center owner gets it;
+-- the agent roles never do.
+GRANT USAGE ON DATABASE {{MIRROR_DB}} TO ROLE {{COMMAND_ROLE}};
+GRANT USAGE ON SCHEMA {{MIRROR_DB}}.DESK TO ROLE {{COMMAND_ROLE}};
+GRANT SELECT ON ALL TABLES IN SCHEMA {{MIRROR_DB}}.DESK TO ROLE {{COMMAND_ROLE}};
+GRANT SELECT ON ALL VIEWS IN SCHEMA {{MIRROR_DB}}.DESK TO ROLE {{COMMAND_ROLE}};
+GRANT SELECT ON FUTURE TABLES IN SCHEMA {{MIRROR_DB}}.DESK TO ROLE {{COMMAND_ROLE}};
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA {{MIRROR_DB}}.DESK TO ROLE {{COMMAND_ROLE}};
