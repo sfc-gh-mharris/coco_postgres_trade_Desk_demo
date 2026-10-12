@@ -35,7 +35,8 @@ The installer:
 
 At the end it prints the app URLs.
 
-Using Cortex Code? Say **"install the break desk demo"**. The skill in `.cortex/skills/break-desk-install` drives the same scripts.
+**Using Cortex Code?** Open the cloned folder and say **"install the break desk demo"**. The project skill in `.snowflake/cortex/skills/` is auto-discovered and drives the same scripts.
+Without a clone, add it in CoCo: Agent Settings → Skills → **Add from GitHub** → `https://github.com/sfc-gh-mharris/coco_postgres_trade_Desk_demo/tree/main/skills`. The skill clones the repo for you.
 
 ## Prerequisites
 
@@ -69,6 +70,7 @@ You do **not** need to create the Postgres instance, the mirror, secrets or netw
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): components, data flow, governance controls.
 - [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md): a 15-minute run-through for either UI.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md): common failures and fixes.
+- [docs/SPCS_CORTEX_CODE_BEST_PRACTICES.md](docs/SPCS_CORTEX_CODE_BEST_PRACTICES.md): running the Cortex Code CLI and SDK in SPCS (auth, tokens, Dockerfile, SDK patterns).
 
 ## Cost
 

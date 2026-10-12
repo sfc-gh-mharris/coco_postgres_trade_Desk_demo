@@ -5,4 +5,7 @@ __pycache__/
 *.pyc
 *.pem
 .DS_Store
-.snowflake/
+.snowflake/*
+!.snowflake/cortex/
+.snowflake/cortex/*
+!.snowflake/cortex/skills/
